@@ -140,4 +140,12 @@ class HoaDonController extends Controller
             'status' => 1,
         ]);
     }
+    public function deleteHoaDon(Request $request)
+    {
+        HoaDon::where('hoa_don_id', $request->hoa_don_id)->delete();
+        return response()->json([
+            'message' => 'Hóa đơn đã được xóa thành công',
+            'status' => 1,
+        ]);
+    }
 }
