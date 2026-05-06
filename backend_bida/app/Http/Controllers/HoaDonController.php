@@ -186,4 +186,85 @@ class HoaDonController extends Controller
 
         return response()->json(['data' => $bill]);
     }
+    public function gopBan(Request $request)
+    {
+        $request->validate([
+            'ban_id_from_list' => 'required|array|min:1',
+            'ban_id_from_list.*' => 'exists:bans,ban_id',
+            'ban_id_to' => 'required|exists:bans,ban_id',
+        ]);
+
+        $banFromList = $request->ban_id_from_list;
+        $banToId = $request->ban_id_to;
+
+        if (in_array($banToId, $banFromList)) {
+            return response()->json(['message' => 'Bàn đích không được trùng với các bàn bị gộp.'], 400);
+        }
+
+        $hoaDonTo = HoaDon::where('ban_id', $banToId)
+            ->where('status', 'chưa thanh toán')
+            ->first();
+
+        if (!$hoaDonTo) {
+            return response()->json(['message' => 'Bàn đích không có hóa đơn đang mở.'], 400);
+        }
+
+        // Find or create 'Phụ thu tiền giờ bàn gộp'
+        $dichVuGop = DichVu::firstOrCreate(
+            ['dich_vu_name' => 'Phụ thu tiền giờ bàn gộp'],
+            [
+                'loai_dich_vu' => 'Khác',
+                'price' => 1,
+                'description' => 'Dịch vụ phụ thu tiền giờ khi gộp bàn',
+                'is_active' => true
+            ]
+        );
+
+        foreach ($banFromList as $banFromId) {
+            $hoaDonFrom = HoaDon::where('ban_id', $banFromId)
+                ->where('status', 'chưa thanh toán')
+                ->first();
+
+            if (!$hoaDonFrom) continue; // Skip if no active invoice
+
+            // Calculate charge for hoaDonFrom
+            $startTime = $hoaDonFrom->start_time ? Carbon::parse($hoaDonFrom->start_time) : Carbon::now();
+            $endTime = Carbon::now();
+            $diffInSeconds = max(0, $endTime->timestamp - $startTime->timestamp);
+            $billableMinutes = (int) ceil($diffInSeconds / 60);
+            
+            $banFrom = Ban::find($banFromId);
+            $hourlyRate = (int) ($banFrom->hourly_rate ?? config('bida.hourly_rates.thuong', 50000));
+            
+            $chargeFrom = (int) (round((($billableMinutes / 60) * $hourlyRate) / 100) * 100);
+
+            if ($chargeFrom > 0) {
+                ChiTietHoaDon::create([
+                    'hoa_don_id' => $hoaDonTo->hoa_don_id,
+                    'dich_vu_id' => $dichVuGop->dich_vu_id,
+                    'quantity' => 1,
+                    'price' => $chargeFrom,
+                    'total' => $chargeFrom,
+                ]);
+            }
+
+            // Move all ChiTietHoaDon from hoaDonFrom to hoaDonTo
+            ChiTietHoaDon::where('hoa_don_id', $hoaDonFrom->hoa_don_id)
+                ->update(['hoa_don_id' => $hoaDonTo->hoa_don_id]);
+
+            // Delete hoaDonFrom
+            $hoaDonFrom->delete();
+
+            // Update banFrom status to empty (1)
+            if ($banFrom) {
+                $banFrom->status = 1;
+                $banFrom->save();
+            }
+        }
+
+        return response()->json([
+            'message' => 'Gộp bàn thành công.',
+            'status' => 1
+        ]);
+    }
 }
