@@ -13,4 +13,9 @@ class Promotion extends Model
     protected $primaryKey = 'promotion_id';
     public $timestamps = true;
 
-}
+    protected $fillable = [
+        'name',
+        'type',
+        'config',
+        'is_active',
+    ];
