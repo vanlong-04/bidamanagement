@@ -148,4 +148,17 @@ class HoaDonController extends Controller
             'status' => 1,
         ]);
     }
+    public function updateStatus(Request $request)
+    {
+        $data = Ban::find($request->ban_id);
+
+        if (!$data) {
+            return response()->json(['message' => 'Không tìm thấy bàn'], 404);
+        }
+
+        $data->status = $request->status;
+        $data->save();
+
+        return response()->json(['message' => 'Cập nhật trạng thái bàn thành công']);
+    }
 }
