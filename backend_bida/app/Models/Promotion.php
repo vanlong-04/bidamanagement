@@ -24,3 +24,4 @@ class Promotion extends Model
         'config' => 'array',
         'is_active' => 'boolean',
     ];
+}

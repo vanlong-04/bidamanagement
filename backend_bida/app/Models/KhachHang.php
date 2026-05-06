@@ -18,3 +18,4 @@ class KhachHang extends Model
         'so_dien_thoai',
         'hang_thanh_vien',
     ];
+}
