@@ -45,4 +45,40 @@ class KhachHangController extends Controller
             'data' => $kh
         ]);
     }
+    public function update(Request $request)
+    {
+        $request->validate([
+            'khach_hang_id' => 'required|exists:khach_hangs,khach_hang_id',
+            'ten_khach_hang' => 'required|string|max:255',
+            'so_dien_thoai' => 'required|string|max:15|unique:khach_hangs,so_dien_thoai,' . $request->khach_hang_id . ',khach_hang_id',
+            'hang_thanh_vien' => 'required|in:Thường,VIP'
+        ]);
+
+        $kh = KhachHang::find($request->khach_hang_id);
+        $kh->update([
+            'ten_khach_hang' => $request->ten_khach_hang,
+            'so_dien_thoai' => $request->so_dien_thoai,
+            'hang_thanh_vien' => $request->hang_thanh_vien
+        ]);
+
+        return response()->json([
+            'status' => 1,
+            'message' => 'Cập nhật khách hàng thành công.',
+            'data' => $kh
+        ]);
+    }
+
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'khach_hang_id' => 'required|exists:khach_hangs,khach_hang_id'
+        ]);
+
+        KhachHang::find($request->khach_hang_id)->delete();
+
+        return response()->json([
+            'status' => 1,
+            'message' => 'Đã xóa khách hàng.'
+        ]);
+    }
 }
