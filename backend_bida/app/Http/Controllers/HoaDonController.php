@@ -267,4 +267,21 @@ class HoaDonController extends Controller
             'status' => 1
         ]);
     }
+    public function extendTime(Request $request)
+    {
+        $request->validate([
+            'hoa_don_id' => 'required|exists:hoa_dons,hoa_don_id',
+            'minutes' => 'required|integer|min:1',
+        ]);
+
+        $hoaDon = HoaDon::find($request->hoa_don_id);
+        $currentExpected = $hoaDon->expected_end_time ? Carbon::parse($hoaDon->expected_end_time) : Carbon::now();
+        $hoaDon->expected_end_time = $currentExpected->addMinutes($request->minutes);
+        $hoaDon->save();
+
+        return response()->json([
+            'message' => 'Gia hạn thời gian thành công',
+            'expected_end_time' => $hoaDon->expected_end_time
+        ]);
+    }
 }
