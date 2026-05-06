@@ -12,4 +12,11 @@ use Carbon\Carbon;
 
 class HoaDonController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        //
+    }
 }
