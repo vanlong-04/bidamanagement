@@ -28,3 +28,8 @@ class HoaDon extends Model
     {
         return $this->hasMany(ChiTietHoaDon::class, 'hoa_don_id', 'hoa_don_id');
     }
+
+    public function nhanVien()
+    {
+        return $this->belongsTo(NhanVien::class, 'nhan_vien_id', 'nhan_vien_id');
+    }
