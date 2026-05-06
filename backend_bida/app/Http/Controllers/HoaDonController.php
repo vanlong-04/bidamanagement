@@ -161,4 +161,14 @@ class HoaDonController extends Controller
 
         return response()->json(['message' => 'Cập nhật trạng thái bàn thành công']);
     }
+    public function updateEndTime(Request $request)
+    {
+        $data = HoaDon::find($request->hoa_don_id);
+        if ($data) {
+            $data->end_time = $request->end_time;
+            $data->save();
+            return response()->json(['message' => 'Cập nhật end_time thành công']);
+        }
+        return response()->json(['message' => 'Không tìm thấy hóa đơn'], 404);
+    }
 }
