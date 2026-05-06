@@ -23,3 +23,8 @@ class HoaDon extends Model
         'discount_amount',
         'promotion_id',
     ];
+
+    public function chiTietHoaDons()
+    {
+        return $this->hasMany(ChiTietHoaDon::class, 'hoa_don_id', 'hoa_don_id');
+    }
