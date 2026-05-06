@@ -13,4 +13,8 @@ class KhachHang extends Model
 
     protected $primaryKey = 'khach_hang_id';
 
-}
+    protected $fillable = [
+        'ten_khach_hang',
+        'so_dien_thoai',
+        'hang_thanh_vien',
+    ];
