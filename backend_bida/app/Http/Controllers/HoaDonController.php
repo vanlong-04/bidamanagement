@@ -65,4 +65,11 @@ class HoaDonController extends Controller
             'data' => $hoaDon,
         ]);
     }
+    public function getHoaDon(Request $request)
+    {
+        $data = HoaDon::with(['ban', 'chiTietHoaDons.dichVu'])->orderBy('created_at', 'desc')->get();
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
 }
