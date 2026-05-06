@@ -72,4 +72,72 @@ class HoaDonController extends Controller
             'data' => $data,
         ]);
     }
+    public function updateHoaDon(Request $request)
+    {
+        $payload = $request->validate([
+            'hoa_don_id' => 'required|integer|exists:hoa_dons,hoa_don_id',
+            'start_time' => 'nullable|date',
+            'end_time' => 'nullable|date',
+            'total_hours' => 'nullable|numeric|min:0',
+            'status' => 'nullable|string',
+            'payment_method' => 'nullable|string|max:50',
+        ]);
+
+        $hoaDon = HoaDon::with(['ban', 'chiTietHoaDons'])->find($payload['hoa_don_id']);
+
+        $startTime = isset($payload['start_time'])
+            ? new \DateTime($payload['start_time'])
+            : ($hoaDon->start_time ? new \DateTime($hoaDon->start_time) : null);
+        $endTime = isset($payload['end_time'])
+            ? new \DateTime($payload['end_time'])
+            : new \DateTime();
+
+        $totalHours = (float) ($payload['total_hours'] ?? 0);
+        $charge = 0;
+
+        if ($startTime) {
+            $diffInSeconds = max(0, $endTime->getTimestamp() - $startTime->getTimestamp());
+            $billableMinutes = (int) ceil($diffInSeconds / 60);
+            $totalHours = round($diffInSeconds / 3600, 2);
+            $hourlyRate = (int) ($hoaDon->ban->hourly_rate ?? config('bida.hourly_rates.thuong', 50000));
+            $charge = (int) (round((($billableMinutes / 60) * $hourlyRate) / 100) * 100);
+        }
+
+        $serviceTotal = (float) $hoaDon->chiTietHoaDons->sum(function ($item) {
+            return $item->total ?? ((float) $item->price * (int) $item->quantity);
+        });
+
+        // Happy Hour Logic
+        $discountAmount = 0;
+        $happyHour = Promotion::where('type', 'happy_hour')->where('is_active', true)->first();
+        if ($happyHour) {
+            $config = $happyHour->config;
+            $now = Carbon::now();
+            $startTimeHH = Carbon::createFromFormat('H:i', $config['start_time']);
+            $endTimeHH = Carbon::createFromFormat('H:i', $config['end_time']);
+            
+            if ($now->between($startTimeHH, $endTimeHH)) {
+                $discountPercent = $config['discount_percent'] ?? 0;
+                $discountAmount = ($charge * $discountPercent) / 100;
+            }
+        }
+
+        $totalAmount = $serviceTotal + $charge - $discountAmount;
+
+        $hoaDon->update([
+            'start_time' => $startTime ? $startTime->format('Y-m-d H:i:s') : null,
+            'end_time' => $endTime->format('Y-m-d H:i:s'),
+            'total_hours' => $totalHours,
+            'charge' => $charge,
+            'discount_amount' => $discountAmount,
+            'total_amount' => $totalAmount,
+            'status' => $payload['status'] ?? $hoaDon->status,
+            'payment_method' => $payload['payment_method'] ?? $hoaDon->payment_method,
+        ]);
+
+        return response()->json([
+            'message' => 'Hóa đơn đã được cập nhật thành công',
+            'status' => 1,
+        ]);
+    }
 }
