@@ -1,0 +1,675 @@
+/* ============================================
+   BIDA VIP - Natural/Organic Design System
+   ============================================ */
+
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* CSS Custom Properties - Design Tokens */
+:root {
+  /* Colors */
+  --natural-bg: #F8F7F4;
+  --natural-surface: #FFFFFF;
+  --natural-primary: #4A5D4E;
+  --natural-primary-hover: rgba(74, 93, 78, 0.9);
+  --natural-primary-light: rgba(74, 93, 78, 0.05);
+  --natural-primary-shadow: rgba(74, 93, 78, 0.2);
+  --natural-secondary: #D4A373;
+  --natural-accent: #E9EDC9;
+  --natural-accent-light: rgba(233, 237, 201, 0.3);
+  --natural-text: #2D3436;
+  --natural-muted: #94A3B8;
+  --natural-border: rgba(214, 211, 209, 0.6);
+  --natural-border-light: rgba(214, 211, 209, 0.3);
+
+  /* Fonts */
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* Radius */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 2.5rem;
+  --radius-2xl: 3rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.03);
+  --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+  --shadow-xl: 0 20px 40px rgba(0,0,0,0.08);
+
+  /* Transitions */
+  --transition-fast: 200ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 500ms ease;
+}
+
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--natural-bg);
+  color: var(--natural-text);
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(at 0% 0%, rgba(233, 237, 201, 0.3) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(212, 163, 115, 0.1) 0px, transparent 50%);
+}
+
+#app {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ============================================
+   Typography Utilities
+   ============================================ */
+.serif {
+  font-family: var(--font-serif);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.text-natural-primary {
+  color: var(--natural-primary) !important;
+}
+
+.text-natural-secondary {
+  color: var(--natural-secondary) !important;
+}
+
+.text-natural-muted {
+  color: var(--natural-muted) !important;
+}
+
+.text-natural-text {
+  color: var(--natural-text) !important;
+}
+
+.label-xs {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  color: var(--natural-muted);
+}
+
+.label-xxs {
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+
+.tracking-wide {
+  letter-spacing: 0.05em;
+}
+
+.tracking-wider {
+  letter-spacing: 0.1em;
+}
+
+.tracking-widest {
+  letter-spacing: 0.2em;
+}
+
+/* ============================================
+   Card - Organic Style
+   ============================================ */
+.card-organic {
+  background-color: var(--natural-surface);
+  border: 1px solid var(--natural-border);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.card-organic-hover {
+  transition: all var(--transition-normal);
+}
+
+.card-organic-hover:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+.card-organic-xl {
+  border-radius: var(--radius-2xl);
+}
+
+/* ============================================
+   Button - Organic Style
+   ============================================ */
+.btn-organic {
+  padding: 10px 24px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.btn-organic:active {
+  transform: scale(0.95);
+}
+
+.btn-primary-organic {
+  background-color: var(--natural-primary);
+  color: white;
+  box-shadow: 0 4px 15px var(--natural-primary-shadow);
+}
+
+.btn-primary-organic:hover {
+  background-color: var(--natural-primary-hover);
+}
+
+.btn-secondary-organic {
+  background-color: var(--natural-accent);
+  color: var(--natural-primary);
+}
+
+.btn-secondary-organic:hover {
+  background-color: rgba(233, 237, 201, 0.8);
+}
+
+.btn-ghost-organic {
+  background-color: rgba(245, 245, 244, 1);
+  color: var(--natural-muted);
+  border: 1px solid rgba(214, 211, 209, 1);
+}
+
+.btn-ghost-organic:hover {
+  color: var(--natural-primary);
+  border-color: var(--natural-primary);
+}
+
+.btn-danger-organic {
+  background-color: rgba(239, 68, 68, 0.05);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.btn-danger-organic:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* ============================================
+   Input - Organic Style
+   ============================================ */
+.input-organic {
+  width: 100%;
+  background-color: rgba(250, 250, 249, 1);
+  border: 1px solid rgba(214, 211, 209, 1);
+  border-radius: var(--radius-md);
+  padding: 14px 24px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--natural-text);
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.input-organic::placeholder {
+  color: rgba(214, 211, 209, 1);
+}
+
+.input-organic:focus {
+  border-color: var(--natural-primary);
+  box-shadow: 0 0 0 4px var(--natural-primary-light);
+}
+
+.select-organic {
+  background-color: rgba(250, 250, 249, 1);
+  border: 1px solid rgba(214, 211, 209, 1);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--natural-muted);
+  outline: none;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.select-organic:focus {
+  border-color: var(--natural-primary);
+}
+
+/* ============================================
+   Badge - Organic Style
+   ============================================ */
+.badge-organic {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.badge-success-organic {
+  background-color: rgba(16, 185, 129, 0.05);
+  color: #059669;
+}
+
+.badge-danger-organic {
+  background-color: rgba(239, 68, 68, 0.05);
+  color: #dc2626;
+}
+
+.badge-info-organic {
+  background-color: rgba(250, 250, 249, 1);
+  color: var(--natural-muted);
+  border: 1px solid rgba(214, 211, 209, 1);
+}
+
+.badge-warning-organic {
+  background-color: rgba(245, 158, 11, 0.05);
+  color: #d97706;
+}
+
+.badge-trend-positive {
+  background-color: rgba(16, 185, 129, 0.05);
+  color: #059669;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+}
+
+.badge-trend-neutral {
+  background-color: rgba(250, 250, 249, 1);
+  color: var(--natural-muted);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+}
+
+/* ============================================
+   Dot indicator
+   ============================================ */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-sm {
+  width: 6px;
+  height: 6px;
+}
+
+.dot-success {
+  background-color: #10b981;
+}
+
+.dot-danger {
+  background-color: #ef4444;
+}
+
+.dot-pulse {
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ============================================
+   Table - Organic Style
+   ============================================ */
+.table-organic {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+.table-organic thead tr {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-weight: 700;
+  color: var(--natural-muted);
+  border-bottom: 1px solid rgba(245, 245, 244, 1);
+}
+
+.table-organic thead th {
+  padding: 32px 40px;
+}
+
+.table-organic tbody tr {
+  border-bottom: 1px solid rgba(250, 250, 249, 1);
+  transition: background-color var(--transition-fast);
+}
+
+.table-organic tbody tr:hover {
+  background-color: rgba(250, 250, 249, 0.5);
+}
+
+.table-organic tbody td {
+  padding: 32px 40px;
+}
+
+/* Hover action reveal */
+.table-organic .action-cell {
+  opacity: 0;
+  transform: translateX(16px);
+  transition: all var(--transition-normal);
+}
+
+.table-organic tbody tr:hover .action-cell {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ============================================
+   Stat Card - Organic
+   ============================================ */
+.stat-card {
+  background-color: var(--natural-surface);
+  border: 1px solid var(--natural-border);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: scale(1.02);
+}
+
+.stat-card .stat-icon {
+  padding: 14px;
+  background-color: rgba(250, 250, 249, 1);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(245, 245, 244, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-fast);
+}
+
+.stat-card:hover .stat-icon {
+  background-color: white;
+}
+
+.stat-card .stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--natural-muted);
+  margin-bottom: 4px;
+}
+
+.stat-card .stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--natural-text);
+  letter-spacing: -0.02em;
+}
+
+/* ============================================
+   Scrollbar styling
+   ============================================ */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 10px;
+  border: 2px solid #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s infinite;
+}
+
+/* ============================================
+   Progress Bar - Organic
+   ============================================ */
+.progress-organic {
+  width: 100%;
+  height: 6px;
+  background-color: rgba(245, 245, 244, 1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-organic .progress-bar-organic {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 1s ease;
+}
+
+/* ============================================
+   Modal - Organic Override
+   ============================================ */
+.modal-content {
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid var(--natural-border) !important;
+  box-shadow: var(--shadow-xl) !important;
+  overflow: hidden;
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(245, 245, 244, 1) !important;
+  padding: 20px 28px !important;
+}
+
+.modal-title {
+  font-family: var(--font-serif) !important;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1.5rem !important;
+  color: var(--natural-primary);
+}
+
+.modal-body {
+  padding: 24px 28px !important;
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(245, 245, 244, 1) !important;
+  padding: 16px 28px !important;
+}
+
+.modal-footer .btn-primary {
+  background-color: var(--natural-primary) !important;
+  border-color: var(--natural-primary) !important;
+  border-radius: var(--radius-full) !important;
+  padding: 8px 24px !important;
+  font-size: 10px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+
+.modal-footer .btn-primary:hover {
+  background-color: var(--natural-primary-hover) !important;
+}
+
+.modal-footer .btn-secondary {
+  border-radius: var(--radius-full) !important;
+  padding: 8px 24px !important;
+  font-size: 10px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  background-color: rgba(250, 250, 249, 1) !important;
+  border-color: rgba(214, 211, 209, 1) !important;
+  color: var(--natural-muted) !important;
+}
+
+.modal-footer .btn-danger {
+  border-radius: var(--radius-full) !important;
+  padding: 8px 24px !important;
+  font-size: 10px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  background-color: #ef4444 !important;
+  border-color: #ef4444 !important;
+}
+
+/* Modal form controls */
+.modal-body .form-control,
+.modal-body .form-select {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid rgba(214, 211, 209, 1) !important;
+  padding: 12px 18px !important;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+
+.modal-body .form-control:focus,
+.modal-body .form-select:focus {
+  border-color: var(--natural-primary) !important;
+  box-shadow: 0 0 0 4px var(--natural-primary-light) !important;
+}
+
+.modal-body .form-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  color: var(--natural-muted);
+  margin-left: 4px;
+}
+
+/* Alert in modal */
+.modal-body .alert-danger {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+  background-color: rgba(239, 68, 68, 0.05) !important;
+  color: #dc2626 !important;
+}
+
+/* ============================================
+   Layout Helpers
+   ============================================ */
+.page-header {
+  margin-bottom: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  font-family: var(--font-serif);
+  font-style: italic;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.page-title strong {
+  font-weight: 700;
+  font-style: normal;
+  color: var(--natural-primary);
+}
+
+.page-subtitle {
+  color: var(--natural-muted);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* Search bar organic */
+.search-organic-wrap {
+  position: relative;
+  flex: 1;
+  max-width: 500px;
+}
+
+.search-organic-wrap .search-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--natural-muted);
+}
+
+.search-organic-wrap .input-organic {
+  padding-left: 52px;
+}
+
+/* Filter bar */
+.filter-bar {
+  padding: 32px;
+  border-bottom: 1px solid rgba(245, 245, 244, 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background-color: rgba(250, 250, 249, 0.5);
+}
