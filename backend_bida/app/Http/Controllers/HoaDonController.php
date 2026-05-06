@@ -171,4 +171,19 @@ class HoaDonController extends Controller
         }
         return response()->json(['message' => 'Không tìm thấy hóa đơn'], 404);
     }
+    public function getBillByBanId(Request $request)
+    {
+        $ban_id = $request->ban_id;
+        $bill = \App\Models\HoaDon::with(['chiTietHoaDons.dichVu', 'ban'])
+            ->where('ban_id', $ban_id)
+            ->where('status', 'chưa thanh toán')
+            ->orderBy('hoa_don_id', 'desc')
+            ->first();
+
+        if (!$bill) {
+            return response()->json(['data' => null]);
+        }
+
+        return response()->json(['data' => $bill]);
+    }
 }
