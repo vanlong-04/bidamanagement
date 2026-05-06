@@ -33,3 +33,8 @@ class HoaDon extends Model
     {
         return $this->belongsTo(NhanVien::class, 'nhan_vien_id', 'nhan_vien_id');
     }
+
+    public function ban()
+    {
+        return $this->belongsTo(Ban::class, 'ban_id', 'ban_id');
+    }
