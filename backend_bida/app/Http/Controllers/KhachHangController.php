@@ -14,4 +14,15 @@ class KhachHangController extends Controller
             'data' => $data
         ]);
     }
+    public function search(Request $request)
+    {
+        $phone = $request->query('phone');
+        if (!$phone) {
+            return response()->json(['data' => null]);
+        }
+        $khachHang = KhachHang::where('so_dien_thoai', $phone)->first();
+        return response()->json([
+            'data' => $khachHang
+        ]);
+    }
 }
