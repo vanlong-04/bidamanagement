@@ -19,3 +19,8 @@ class Promotion extends Model
         'config',
         'is_active',
     ];
+
+    protected $casts = [
+        'config' => 'array',
+        'is_active' => 'boolean',
+    ];
