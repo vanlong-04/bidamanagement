@@ -284,4 +284,32 @@ class HoaDonController extends Controller
             'expected_end_time' => $hoaDon->expected_end_time
         ]);
     }
+    public function bookMultipleTables(Request $request)
+    {
+        $request->validate([
+            'ban_ids' => 'required|array',
+            'ban_ids.*' => 'exists:bans,ban_id',
+        ]);
+
+        $results = [];
+        foreach ($request->ban_ids as $banId) {
+            $ban = Ban::find($banId);
+            if ($ban->status == 1) { // Chỉ mở bàn trống
+                $hoaDon = HoaDon::create([
+                    'ban_id' => $banId,
+                    'nhan_vien_id' => 1,
+                    'start_time' => Carbon::now(),
+                    'status' => 'chưa thanh toán'
+                ]);
+                $ban->status = 2; // Đang dùng
+                $ban->save();
+                $results[] = $hoaDon;
+            }
+        }
+
+        return response()->json([
+            'message' => 'Đã mở ' . count($results) . ' bàn thành công',
+            'data' => $results
+        ]);
+    }
 }
