@@ -257,6 +257,32 @@ export default {
             savingRates: false,
             rateMessage: '',
         }
+    },
+    watch: {
+        'create_table.ban_name'(newVal) {
+            const name = newVal.toLowerCase();
+            if (name.includes('vip')) {
+                if (name.includes('lỗ')) this.create_table.loai_ban = 3;
+                else if (name.includes('phăng')) this.create_table.loai_ban = 4;
+                else this.create_table.loai_ban = 3; // Mặc định Lỗ VIP
+            } else if (name.includes('lỗ')) {
+                this.create_table.loai_ban = 1;
+            } else if (name.includes('phăng')) {
+                this.create_table.loai_ban = 2;
+            }
+        },
+        'update_table.ban_name'(newVal) {
+            const name = newVal.toLowerCase();
+            if (name.includes('vip')) {
+                if (name.includes('lỗ')) this.update_table.loai_ban = 3;
+                else if (name.includes('phăng')) this.update_table.loai_ban = 4;
+                else this.update_table.loai_ban = 3;
+            } else if (name.includes('lỗ')) {
+                this.update_table.loai_ban = 1;
+            } else if (name.includes('phăng')) {
+                this.update_table.loai_ban = 2;
+            }
+        }
     }
 }
 </script>
