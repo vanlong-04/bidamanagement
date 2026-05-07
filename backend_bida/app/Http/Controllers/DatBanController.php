@@ -54,6 +54,26 @@ class DatBanController extends Controller
         return DatBan::findOrFail($id);
     }
 
+    private function transformBooking(DatBan $booking): array
+    {
+        return [
+            'id' => $booking->id,
+            'ban_id' => $booking->ban_id,
+            'loai_ban' => $booking->loai_ban,
+            'ten_khach_hang' => $booking->ten_khach_hang,
+            'so_dien_thoai' => $booking->so_dien_thoai,
+            'thoi_gian_dat' => $booking->thoi_gian_dat,
+            'so_luong_nguoi' => $booking->so_luong_nguoi,
+            'ghi_chu' => $booking->ghi_chu,
+            'status' => $booking->status,
+            'ban' => $booking->ban ? [
+                'ban_id' => $booking->ban->ban_id,
+                'ban_name' => $booking->ban->ban_name,
+                'loai_ban_label' => $booking->ban->loai_ban_label,
+            ] : null,
+        ];
+    }
+
     public function index()
     {
         $data = DatBan::with('ban')
