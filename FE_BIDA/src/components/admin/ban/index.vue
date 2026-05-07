@@ -51,6 +51,83 @@
                 THÊM BÀN MỚI
             </button>
         </header>
+
+        <!-- Table Card -->
+        <div class="card-organic card-organic-xl">
+            <!-- Search/Filter Bar -->
+            <div class="filter-bar">
+                <div class="search-organic-wrap">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" class="input-organic" style="padding-left: 52px;" placeholder="Tìm kiếm bàn..." v-model="searchQuery">
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div style="overflow-x: auto;">
+                <table class="table-organic">
+                    <thead>
+                        <tr>
+                            <th>Tên Bàn</th>
+                            <th>Loại bàn</th>
+                            <th>Giá giờ</th>
+                            <th>Trạng thái</th>
+                            <th style="text-align: right;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(value, index) in filteredTables" :key="index">
+                            <td>
+                                <span class="table-name serif">{{ value.ban_name }}</span>
+                            </td>
+                            <td>
+                                <div class="table-type-pill" :class="getTypeClass(value.loai_ban)">
+                                    <i :class="getTypeIcon(value.loai_ban)"></i>
+                                    <span v-if="Number(value.loai_ban) === 1">Bida Lỗ</span>
+                                    <span v-else-if="Number(value.loai_ban) === 2">Bida Phăng</span>
+                                    <span v-else-if="Number(value.loai_ban) === 3">Bida Lỗ VIP</span>
+                                    <span v-else-if="Number(value.loai_ban) === 4">Bida Phăng VIP</span>
+                                    <span v-else>Khác</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="font-mono" style="font-weight: 700; color: var(--natural-primary);">
+                                    {{ formatPrice(value.hourly_rate || 0) }}/giờ
+                                </span>
+                            </td>
+                            <td>
+                                <span v-if="value.status == 1" class="badge-organic badge-success-organic">
+                                    <span class="dot dot-sm dot-success dot-pulse"></span>
+                                    Trống
+                                </span>
+                                <span v-else-if="value.status == 2" class="badge-organic badge-danger-organic">
+                                    <span class="dot dot-sm dot-danger"></span>
+                                    Đang sử dụng
+                                </span>
+                                <span v-else-if="value.status == 3" class="badge-organic" style="background: rgba(217,119,6,0.1); color: #d97706; border: 1px solid rgba(217,119,6,0.2);">
+                                    <span class="dot dot-sm" style="background: #d97706;"></span>
+                                    Đã đặt
+                                </span>
+                                <span v-else class="badge-organic">Khác</span>
+                            </td>
+                            <td style="text-align: right;">
+                                <div class="action-cell" style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+                                    <button class="btn-organic btn-ghost-organic" style="padding: 10px;" data-bs-toggle="modal"
+                                        data-bs-target="#updateTableModal"
+                                        v-on:click="Object.assign(update_table, value)">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="btn-organic btn-danger-organic" style="padding: 10px;" data-bs-toggle="modal"
+                                        data-bs-target="#deleteTableModal"
+                                        v-on:click="Object.assign(delete_table, value)">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </template>
 <script>
