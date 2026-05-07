@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class DatBanController extends Controller
 {
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_CONFIRMED = 'confirmed';
+    public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_COMPLETED = 'completed';
+
     public function index()
     {
         $data = DatBan::with('ban')
