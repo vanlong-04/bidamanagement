@@ -231,9 +231,32 @@
     </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
     data() {
-        return {}
+        return {
+            tables: [],
+            searchQuery: '',
+            create_table: {
+                ban_name: '',
+                loai_ban: 1,
+                status: 1,
+            },
+            update_table: {
+                ban_name: '',
+                loai_ban: 1,
+                status: 1,
+            },
+            delete_table: {
+                ban_name: '',
+                loai_ban: 1,
+                status: 1,
+            }
+            ,
+            hourlyRates: { lo: 50000, phang: 50000, lo_vip: 80000, phang_vip: 80000 },
+            savingRates: false,
+            rateMessage: '',
+        }
     }
 }
 </script>
