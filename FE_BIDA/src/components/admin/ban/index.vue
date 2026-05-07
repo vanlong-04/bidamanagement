@@ -381,6 +381,35 @@ export default {
             const map = { 1: 'fa-solid fa-bowling-ball', 2: 'fa-solid fa-circle-dot', 3: 'fa-solid fa-crown', 4: 'fa-solid fa-crown' };
             return map[type] || 'fa-solid fa-table-cells';
         },
-    }
 }
 </script>
+<style scoped>
+.table-name {
+    font-size: 1.4rem;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: -0.02em;
+    color: var(--natural-text);
+    transition: color var(--transition-fast);
+}
+
+tr:hover .table-name {
+    color: var(--natural-primary);
+}
+
+.table-type-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.type-lo { background: rgba(34,197,94,0.1); color: #16a34a; }
+.type-phang { background: rgba(14,165,233,0.1); color: #0284c7; }
+.type-lo-vip { background: rgba(249,115,22,0.1); color: #ea580c; border: 1px solid rgba(249,115,22,0.2); }
+.type-phang-vip { background: rgba(147,51,234,0.1); color: #9333ea; border: 1px solid rgba(147,51,234,0.2); }
+</style>
