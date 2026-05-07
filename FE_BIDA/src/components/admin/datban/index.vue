@@ -168,7 +168,8 @@ export default {
         ban_id: null,
         so_luong_nguoi: 1,
         ghi_chu: ''
-      }
+      },
+      formErrors: {}
     };
   },
   computed: {
@@ -193,6 +194,18 @@ export default {
     this.modal = new Modal(document.getElementById('modalDatBan'));
   },
   methods: {
+    resetForm() {
+      this.form = {
+        ten_khach_hang: '',
+        so_dien_thoai: '',
+        thoi_gian_dat: new Date().toISOString().slice(0, 16),
+        loai_ban: 1,
+        ban_id: null,
+        so_luong_nguoi: 1,
+        ghi_chu: ''
+      };
+      this.formErrors = {};
+    },
     loadBookings() {
       this.isLoading = true;
       axios.get('http://127.0.0.1:8000/api/admin/dat-ban/get-data')
