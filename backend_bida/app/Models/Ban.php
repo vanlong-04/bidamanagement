@@ -22,6 +22,12 @@ class Ban extends Model
     protected $primaryKey = 'ban_id';
     public $timestamps = true;
 
+    protected $appends = [
+        'loai_ban_label',
+        'hourly_rate',
+        'name', 
+    ];
+
     protected $fillable = [
         'ban_name',
         'loai_ban',
