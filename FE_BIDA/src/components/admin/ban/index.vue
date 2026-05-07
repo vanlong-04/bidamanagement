@@ -381,6 +381,7 @@ export default {
             const map = { 1: 'fa-solid fa-bowling-ball', 2: 'fa-solid fa-circle-dot', 3: 'fa-solid fa-crown', 4: 'fa-solid fa-crown' };
             return map[type] || 'fa-solid fa-table-cells';
         },
+    }
 }
 </script>
 <style scoped>
