@@ -14,7 +14,6 @@ class KhachHangController extends Controller
             'data' => $data
         ]);
     }
-
     public function search(Request $request)
     {
         $phone = $request->query('phone');
@@ -26,7 +25,6 @@ class KhachHangController extends Controller
             'data' => $khachHang
         ]);
     }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -47,7 +45,6 @@ class KhachHangController extends Controller
             'data' => $kh
         ]);
     }
-
     public function update(Request $request)
     {
         $request->validate([

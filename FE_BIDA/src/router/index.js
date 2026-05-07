@@ -39,6 +39,7 @@ const routes = [
         path: 'dashboard',
         component: () => import('../components/Test/index.vue')
       },
+      // Routes của Sơn - Quản lý Bàn
       {
         path: 'ban',
         component: () => import('../components/admin/ban/index.vue')
