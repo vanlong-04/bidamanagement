@@ -40,6 +40,15 @@ class DatBanController extends Controller
         ];
     }
 
+    private function validateStoreRequest(Request $request): void
+    {
+        $request->validate([
+            'ten_khach_hang' => 'required|string|max:255',
+            'so_dien_thoai' => 'required|string|max:50',
+            'thoi_gian_dat' => 'required|date',
+        ]);
+    }
+
     private function findBookingById(int $id): DatBan
     {
         return DatBan::findOrFail($id);
@@ -59,11 +68,7 @@ class DatBanController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'ten_khach_hang' => 'required|string|max:255',
-            'so_dien_thoai' => 'required|string|max:50',
-            'thoi_gian_dat' => 'required|date',
-        ]);
+        $this->validateStoreRequest($request);
 
         $booking = DatBan::create($this->makeBookingPayload($request));
 
