@@ -283,6 +283,104 @@ export default {
                 this.update_table.loai_ban = 2;
             }
         }
+    },
+    computed: {
+        filteredTables() {
+            if (!this.searchQuery) return this.tables;
+            const q = this.searchQuery.toLowerCase();
+            return this.tables.filter(t => t.ban_name && t.ban_name.toLowerCase().includes(q));
+        }
+    },
+    mounted() {
+        this.getTables();
+        this.getHourlyRates();
+    },
+    methods: {
+        getHourlyRates() {
+            axios.get('http://127.0.0.1:8000/api/admin/bida-config/get-hourly-rates')
+                .then(res => {
+                    if (res.data) this.hourlyRates = res.data;
+                })
+                .catch(() => { this.rateMessage = 'Không lấy được giá giờ hiện tại!'; });
+        },
+        saveHourlyRates() {
+            this.savingRates = true;
+            this.rateMessage = '';
+            axios.post('http://127.0.0.1:8000/api/admin/bida-config/set-hourly-rates', this.hourlyRates)
+                .then(res => {
+                    this.rateMessage = res.data.message || 'Đã lưu giá giờ!';
+                })
+                .catch(() => { this.rateMessage = 'Lỗi khi lưu giá giờ!'; })
+                .finally(() => { this.savingRates = false; });
+        },
+        formatPrice(price) {
+            return new Intl.NumberFormat('vi-VN').format(Number(price) || 0) + 'đ';
+        },
+        getTables() {
+            axios.get('http://127.0.0.1:8000/api/admin/ban/get-data')
+                .then((res) => {
+                    console.log('API response:', res.data);
+                    this.tables = res.data.data;
+                })
+                .catch((error) => {
+                    console.error('API error:', error);
+                })
+        },
+        createTable() {
+            axios.post('http://127.0.0.1:8000/api/admin/ban/create-data', this.create_table)
+                .then((res) => {
+                    if (res.data.status) {
+                        this.getTables();
+                        this.create_table = {
+                            ban_name: '',
+                            loai_ban: 1,
+                            status: 1,
+                        }
+                        alert(res.data.message);
+                    } else {
+                        alert(res.data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+        updateTable() {
+            axios.post('http://127.0.0.1:8000/api/admin/ban/update-data', this.update_table)
+                .then((res) => {
+                    if (res.data.status) {
+                        this.getTables();
+                        alert(res.data.message);
+                    } else {
+                        alert(res.data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+        deleteTable() {
+            axios.post('http://127.0.0.1:8000/api/admin/ban/delete-data', this.delete_table)
+                .then((res) => {
+                    if (res.data.status) {
+                        this.getTables();
+                        alert(res.data.message);
+                    } else {
+                        alert(res.data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+        getTypeClass(type) {
+            const map = { 1: 'type-lo', 2: 'type-phang', 3: 'type-lo-vip', 4: 'type-phang-vip' };
+            return map[type] || '';
+        },
+        getTypeIcon(type) {
+            const map = { 1: 'fa-solid fa-bowling-ball', 2: 'fa-solid fa-circle-dot', 3: 'fa-solid fa-crown', 4: 'fa-solid fa-crown' };
+            return map[type] || 'fa-solid fa-table-cells';
+        },
     }
 }
 </script>
