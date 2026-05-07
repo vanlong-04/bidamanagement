@@ -46,4 +46,23 @@ class BanController extends Controller
             'status' => 1,
         ]);
     }
+    public function updateBan(Request $request)
+    {
+        $payload = $request->validate([
+            'ban_id' => 'required|integer|exists:bans,ban_id',
+            'ban_name' => 'required|string|max:50|unique:bans,ban_name,' . $request->ban_id . ',ban_id',
+            'loai_ban' => 'required|integer|in:1,2,3,4',
+            'status' => 'required|integer|in:1,2',
+        ]);
+
+        Ban::where('ban_id', $payload['ban_id'])->update([
+            'ban_name' => $payload['ban_name'],
+            'loai_ban' => $payload['loai_ban'],
+            'status' => $payload['status'],
+        ]);
+        return response()->json([
+            'message' => 'Bàn đã được cập nhật thành công',
+            'status' => 1,
+        ]);
+    }
 }
