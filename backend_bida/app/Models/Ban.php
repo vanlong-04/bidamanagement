@@ -59,4 +59,13 @@ class Ban extends Model
         if ($this->loai_ban == self::LOAI_PHANG_VIP) return 'Bida Phăng VIP';
         return 'Khác';
     }
+
+    public function getHourlyRateAttribute(): int
+    {
+        if ($this->loai_ban == self::LOAI_LO) return (int) config('bida.hourly_rates.lo', 50000);
+        if ($this->loai_ban == self::LOAI_PHANG) return (int) config('bida.hourly_rates.phang', 50000);
+        if ($this->loai_ban == self::LOAI_LO_VIP) return (int) config('bida.hourly_rates.lo_vip', 80000);
+        if ($this->loai_ban == self::LOAI_PHANG_VIP) return (int) config('bida.hourly_rates.phang_vip', 80000);
+        return 0;
+    }
 }
