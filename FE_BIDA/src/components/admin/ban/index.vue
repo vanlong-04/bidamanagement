@@ -167,6 +167,45 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal Sửa -->
+        <div class="modal fade" id="updateTableModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Cập nhật bàn</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Tên bàn</label>
+                            <input type="text" class="form-control" v-model="update_table.ban_name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Loại bàn</label>
+                            <select class="form-select" v-model="update_table.loai_ban">
+                                <option :value="1">Bida Lỗ</option>
+                                <option :value="2">Bida Phăng</option>
+                                <option :value="3">Bida Lỗ VIP</option>
+                                <option :value="4">Bida Phăng VIP</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Trạng thái</label>
+                            <select class="form-select" v-model="update_table.status">
+                                <option :value="1">Trống</option>
+                                <option :value="2">Đang sử dụng</option>
+                                <option :value="3">Đã đặt</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="updateTable()">Cập nhật</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
