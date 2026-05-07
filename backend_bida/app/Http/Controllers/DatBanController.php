@@ -76,11 +76,7 @@ class DatBanController extends Controller
             $this->syncBanStatus($booking->ban_id, self::STATUS_PENDING);
         }
 
-        return response()->json([
-            'status' => 1,
-            'message' => 'Đặt bàn thành công',
-            'data' => $booking,
-        ]);
+        return $this->successResponse('Đặt bàn thành công', $booking);
     }
 
     public function updateStatus(Request $request)
@@ -117,9 +113,20 @@ class DatBanController extends Controller
             $this->syncBanStatus($banId, self::STATUS_CANCELLED);
         }
 
-        return response()->json([
+        return $this->successResponse('Xóa đặt bàn thành công');
+    }
+
+    private function successResponse(string $message, $data = null)
+    {
+        $response = [
             'status' => 1,
-            'message' => 'Xóa đặt bàn thành công',
-        ]);
+            'message' => $message,
+        ];
+
+        if ($data !== null) {
+            $response['data'] = $data;
+        }
+
+        return response()->json($response);
     }
 }
