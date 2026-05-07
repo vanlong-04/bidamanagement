@@ -2,15 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DatBan extends Model
 {
-    use HasFactory;
-
     protected $table = 'dat_bans';
-
     protected $fillable = [
         'ban_id',
         'loai_ban',
@@ -25,20 +21,5 @@ class DatBan extends Model
     public function ban()
     {
         return $this->belongsTo(Ban::class, 'ban_id');
-    }
-
-    public function scopeConfirmed($query)
-    {
-        return $query->where('status', 'confirmed');
-    }
-
-    public function scopePending($query)
-    {
-        return $query->where('status', 'pending');
-    }
-
-    public function scopeCancelled($query)
-    {
-        return $query->where('status', 'cancelled');
     }
 }
