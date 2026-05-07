@@ -186,7 +186,6 @@ class HoaDonController extends Controller
 
         return response()->json(['data' => $bill]);
     }
-
     public function gopBan(Request $request)
     {
         $request->validate([
@@ -285,7 +284,6 @@ class HoaDonController extends Controller
             'expected_end_time' => $hoaDon->expected_end_time
         ]);
     }
-
     public function bookMultipleTables(Request $request)
     {
         $request->validate([
