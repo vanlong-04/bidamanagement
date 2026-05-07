@@ -96,6 +96,13 @@
                   Xác nhận
                 </button>
                 <button
+                  class="btn-organic btn-success-organic"
+                  v-if="booking.status !== 'completed'"
+                  @click="completeBooking(booking.id)"
+                >
+                  Hoàn tất
+                </button>
+                <button
                   class="btn-organic btn-danger-organic"
                   @click="deleteBooking(booking.id)"
                 >
@@ -286,6 +293,16 @@ export default {
         .then(() => {
           this.loadBookings();
           this.loadTables();
+        });
+    },
+    completeBooking(id) {
+      axios.post('http://127.0.0.1:8000/api/admin/dat-ban/update-status', { id, status: 'completed' })
+        .then(() => {
+          this.loadBookings();
+          this.loadTables();
+        })
+        .catch(error => {
+          this.handleApiError(error);
         });
     },
     deleteBooking(id) {
