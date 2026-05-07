@@ -30,6 +30,25 @@
         </select>
       </div>
 
+      <div class="summary-bar">
+        <div class="summary-card">
+          <span>Tổng lượt đặt</span>
+          <strong>{{ bookingCounts.total }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Đang chờ</span>
+          <strong>{{ bookingCounts.pending }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Đã xác nhận</span>
+          <strong>{{ bookingCounts.confirmed }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Đã hủy</span>
+          <strong>{{ bookingCounts.cancelled }}</strong>
+        </div>
+      </div>
+
       <div v-if="isLoading" class="loading-block">
         <div class="spinner-border" role="status"></div>
       </div>
@@ -186,6 +205,14 @@ export default {
         list = list.filter(item => item.status === this.statusFilter);
       }
       return list;
+    },
+    bookingCounts() {
+      return {
+        total: this.bookings.length,
+        pending: this.bookings.filter(b => b.status === 'pending').length,
+        confirmed: this.bookings.filter(b => b.status === 'confirmed').length,
+        cancelled: this.bookings.filter(b => b.status === 'cancelled').length,
+      };
     }
   },
   mounted() {
