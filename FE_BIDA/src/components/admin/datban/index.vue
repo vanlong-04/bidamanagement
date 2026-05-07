@@ -223,15 +223,7 @@ export default {
         });
     },
     openModal() {
-      this.form = {
-        ten_khach_hang: '',
-        so_dien_thoai: '',
-        thoi_gian_dat: new Date().toISOString().slice(0, 16),
-        loai_ban: 1,
-        ban_id: null,
-        so_luong_nguoi: 1,
-        ghi_chu: ''
-      };
+      this.resetForm();
       this.modal.show();
     },
     saveBooking() {
@@ -244,6 +236,7 @@ export default {
         .then(() => {
           this.loadBookings();
           this.loadTables();
+          this.resetForm();
           this.modal.hide();
         })
         .finally(() => {
