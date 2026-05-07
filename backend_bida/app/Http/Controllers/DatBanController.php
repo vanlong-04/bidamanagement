@@ -40,6 +40,11 @@ class DatBanController extends Controller
         ];
     }
 
+    private function findBookingById(int $id): DatBan
+    {
+        return DatBan::findOrFail($id);
+    }
+
     public function index()
     {
         $data = DatBan::with('ban')
@@ -80,7 +85,7 @@ class DatBanController extends Controller
             'status' => 'required|string',
         ]);
 
-        $booking = DatBan::findOrFail($request->id);
+        $booking = $this->findBookingById($request->id);
         $booking->update(['status' => $request->status]);
 
         if ($booking->ban_id) {
@@ -99,7 +104,7 @@ class DatBanController extends Controller
             'id' => 'required|exists:dat_bans,id',
         ]);
 
-        $booking = DatBan::findOrFail($request->id);
+        $booking = $this->findBookingById($request->id);
         $banId = $booking->ban_id;
         $booking->delete();
 
