@@ -39,6 +39,18 @@
                 </form>
             </div>
         </div>
+
+        <!-- Header -->
+        <header class="page-header">
+            <div>
+                <h2 class="page-title">Quản lý <strong>Bàn</strong></h2>
+                <p class="page-subtitle">Cấu hình sơ đồ bàn và loại phòng của quán.</p>
+            </div>
+            <button class="btn-organic btn-primary-organic" style="padding: 16px 36px; font-size: 11px;" data-bs-toggle="modal" data-bs-target="#addTableModal">
+                <i class="fa-solid fa-plus"></i>
+                THÊM BÀN MỚI
+            </button>
+        </header>
     </div>
 </template>
 <script>
