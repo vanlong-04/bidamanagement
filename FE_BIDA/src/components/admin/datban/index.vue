@@ -364,4 +364,34 @@ export default {
   gap: 8px;
   font-weight: 500;
 }
-</style>
+.summary-bar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  padding: 16px 24px;
+}
+.summary-card {
+  padding: 18px 20px;
+  background: var(--natural-surface);
+  border: 1px solid var(--natural-border);
+  border-radius: var(--radius-lg);
+}
+.summary-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--natural-muted);
+}
+.summary-card strong {
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+@media (max-width: 900px) {
+  .summary-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .summary-bar {
+    grid-template-columns: 1fr;
+  }
+}
