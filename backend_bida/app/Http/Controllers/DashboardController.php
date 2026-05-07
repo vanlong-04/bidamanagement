@@ -2,40 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ban;
-use App\Models\DatBan;
-use App\Models\HoaDon;
 use Illuminate\Http\Request;
+use App\Models\ChiTietHoaDon;
+use App\Models\DichVu;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function getStats()
     {
-        $today = now()->toDateString();
+        $today = \Carbon\Carbon::today()->toDateString();
 
-        $totalBookings = DatBan::count();
-        $confirmedBookings = DatBan::where('status', 'confirmed')->count();
-        $pendingBookings = DatBan::where('status', 'pending')->count();
-        $cancelledBookings = DatBan::where('status', 'cancelled')->count();
+        // Top 5 services by quantity sold TODAY
+        $topServices = ChiTietHoaDon::whereDate('created_at', $today)
+            ->select('dich_vu_id', DB::raw('SUM(quantity) as total_quantity'))
+            ->groupBy('dich_vu_id')
+            ->orderBy('total_quantity', 'desc')
+            ->limit(5)
+            ->get();
 
-        $todayRevenue = HoaDon::whereDate('created_at', $today)
-            ->whereIn('status', ['paid', 2, 'đã thanh toán'])
-            ->sum('total_amount');
+        $data = $topServices->map(function ($item) {
+            $dichVu = DichVu::find($item->dich_vu_id);
+            return [
+                'name' => $dichVu ? $dichVu->dich_vu_name : 'Unknown',
+                'count' => (int)$item->total_quantity,
+            ];
+        });
 
-        $activeTables = Ban::where('status', Ban::STATUS_DANG_SU_DUNG)->count();
-        $reservedTables = Ban::where('status', Ban::STATUS_DA_DAT)->count();
+        // Calculate percentages for UI
+        $maxCount = $data->max('count') ?: 1;
+        $colors = ['#f87171', '#fbbf24', '#60a5fa', '#a8a29e', '#34d399'];
+        
+        $result = $data->map(function ($item, $idx) use ($maxCount, $colors) {
+            return [
+                'name' => $item['name'],
+                'count' => $item['count'],
+                'percentage' => round(($item['count'] / $maxCount) * 100),
+                'color' => $colors[$idx % count($colors)]
+            ];
+        });
+
+        // Daily summary stats
+        $todayBills = \App\Models\HoaDon::whereDate('created_at', $today)->get();
+        
+        $todayRevenue = $todayBills->whereIn('status', ['đã thanh toán', 2, 'paid'])->sum('total_amount');
+        $completedBills = $todayBills->whereIn('status', ['đã thanh toán', 2, 'paid'])->count();
+        $totalHours = $todayBills->sum('total_hours');
 
         return response()->json([
             'status' => 1,
-            'data' => [
-                'total_bookings' => $totalBookings,
-                'confirmed_bookings' => $confirmedBookings,
-                'pending_bookings' => $pendingBookings,
-                'cancelled_bookings' => $cancelledBookings,
-                'today_revenue' => $todayRevenue,
-                'active_tables' => $activeTables,
-                'reserved_tables' => $reservedTables,
-            ]
+            'top_services' => $result,
+            'today_revenue' => $todayRevenue,
+            'completed_bills' => $completedBills,
+            'total_hours' => round($totalHours, 1)
         ]);
     }
 }
