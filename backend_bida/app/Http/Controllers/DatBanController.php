@@ -78,7 +78,8 @@ class DatBanController extends Controller
     {
         $data = DatBan::with('ban')
             ->orderBy('thoi_gian_dat', 'asc')
-            ->get();
+            ->get()
+            ->map(fn($booking) => $this->transformBooking($booking));
 
         return response()->json([
             'status' => 1,
