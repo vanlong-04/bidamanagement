@@ -74,6 +74,17 @@ class DatBanController extends Controller
         ];
     }
 
+    private function updateBookingStatus(DatBan $booking, string $status): DatBan
+    {
+        $booking->update(['status' => $status]);
+
+        if ($booking->ban_id) {
+            $this->syncBanStatus($booking->ban_id, $status);
+        }
+
+        return $booking;
+    }
+
     public function index()
     {
         $data = DatBan::with('ban')
@@ -108,11 +119,7 @@ class DatBanController extends Controller
         ]);
 
         $booking = $this->findBookingById($request->id);
-        $booking->update(['status' => $request->status]);
-
-        if ($booking->ban_id) {
-            $this->syncBanStatus($booking->ban_id, $request->status);
-        }
+        $this->updateBookingStatus($booking, $request->status);
 
         return response()->json([
             'status' => 1,
