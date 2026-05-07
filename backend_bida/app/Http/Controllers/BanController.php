@@ -14,4 +14,14 @@ class BanController extends Controller
     {
         //
     }
+    /**
+     * Get the ban data.
+     */
+    public function getBan(Request $request)
+    {
+        $data = Ban::with('activeBooking')->get();
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
 }
