@@ -65,4 +65,12 @@ class BanController extends Controller
             'status' => 1,
         ]);
     }
+    public function deleteBan(Request $request)
+    {
+        Ban::where('ban_id', $request->ban_id)->delete();
+        return response()->json([
+            'message' => 'Bàn đã được xóa thành công',
+            'status' => 1,
+        ]);
+    }
 }
