@@ -228,7 +228,11 @@ export default {
     },
     saveBooking() {
       if (!this.form.ten_khach_hang || !this.form.so_dien_thoai || !this.form.thoi_gian_dat) {
-        alert('Vui lòng điền đầy đủ thông tin bắt buộc');
+        this.formErrors = {
+          ten_khach_hang: !this.form.ten_khach_hang ? 'Tên khách hàng bắt buộc' : '',
+          so_dien_thoai: !this.form.so_dien_thoai ? 'Số điện thoại bắt buộc' : '',
+          thoi_gian_dat: !this.form.thoi_gian_dat ? 'Thời gian đặt bắt buộc' : ''
+        };
         return;
       }
       this.isSaving = true;
@@ -238,6 +242,9 @@ export default {
           this.loadTables();
           this.resetForm();
           this.modal.hide();
+        })
+        .catch(error => {
+          this.handleApiError(error);
         })
         .finally(() => {
           this.isSaving = false;
@@ -256,6 +263,9 @@ export default {
         .then(() => {
           this.loadBookings();
           this.loadTables();
+        })
+        .catch(error => {
+          this.handleApiError(error);
         });
     },
     formatDateTime(value) {
@@ -284,6 +294,10 @@ export default {
         cancelled: 'badge-danger-organic'
       };
       return map[status] || 'badge-organic';
+    },
+    handleApiError(error) {
+      const message = error?.response?.data?.message || 'Lỗi kết nối server, vui lòng thử lại';
+      alert(message);
     }
   }
 };
