@@ -206,6 +206,28 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal Xóa -->
+        <div class="modal fade" id="deleteTableModal" tabindex="-1" aria-labelledby="deleteTableModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="deleteTableModalLabel">Xóa bàn</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger" role="alert">
+                            <p> Bạn có chắc chắn muốn xóa bàn {{ delete_table.ban_name }} không?</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                            v-on:click="deleteTable()">Xóa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
