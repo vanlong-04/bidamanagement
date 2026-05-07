@@ -27,3 +27,9 @@ Route::post('/admin/khach-hang/create-data', [KhachHangController::class, 'store
 Route::post('/admin/khach-hang/update-data', [KhachHangController::class, 'update']);
 Route::post('/admin/khach-hang/delete-data', [KhachHangController::class, 'destroy']);
 
+// Routes của Sơn - Quản lý Bàn
+use App\Http\Controllers\BanController;
+Route::post("/admin/ban/create-data", [BanController::class, "createBan"]);
+Route::get("/admin/ban/get-data", [BanController::class, "getBan"]);
+Route::post("/admin/ban/update-data", [BanController::class, "updateBan"]);
+Route::post("/admin/ban/delete-data", [BanController::class, "deleteBan"]);
