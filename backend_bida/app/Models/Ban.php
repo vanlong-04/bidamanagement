@@ -17,4 +17,14 @@ class Ban extends Model
     public const STATUS_TRONG = 1;
     public const STATUS_DANG_SU_DUNG = 2;
     public const STATUS_DA_DAT = 3;
+
+    protected $table = 'bans';
+    protected $primaryKey = 'ban_id';
+    public $timestamps = true;
+
+    protected $fillable = [
+        'ban_name',
+        'loai_ban',
+        'status',
+    ];
 }
