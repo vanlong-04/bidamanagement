@@ -62,6 +62,7 @@
               <th>SĐT</th>
               <th>Thời gian</th>
               <th>Bàn</th>
+              <th>Ghi chú</th>
               <th>Trạng thái</th>
               <th>Hành động</th>
             </tr>
@@ -77,6 +78,9 @@
                   {{ booking.ban.ban_name }}
                 </span>
                 <span v-else>Chưa gán bàn</span>
+              </td>
+              <td>
+                <span class="note-text">{{ booking.ghi_chu || 'Không có' }}</span>
               </td>
               <td>
                 <span :class="statusClass(booking.status)" class="badge-organic">
