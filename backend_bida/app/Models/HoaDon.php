@@ -9,6 +9,10 @@ class HoaDon extends Model
 {
     use HasFactory;
 
+    protected $table = 'hoa_dons';
+    protected $primaryKey = 'hoa_don_id';
+    public $timestamps = true;
+
     protected $fillable = [
         'ban_id',
         'nhan_vien_id',
@@ -38,3 +42,4 @@ class HoaDon extends Model
     {
         return $this->belongsTo(Ban::class, 'ban_id', 'ban_id');
     }
+}

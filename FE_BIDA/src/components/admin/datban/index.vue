@@ -1,179 +1,171 @@
 <template>
-  <div class="page-section">
-    <header class="page-header">
-      <div>
-        <h2 class="page-title">Đặt bàn trước</h2>
-        <p class="page-subtitle">Tạo và quản lý lịch đặt bàn cho khách hàng.</p>
-      </div>
-      <button class="btn-organic btn-primary-organic" @click="openModal">
-        <i class="fa-solid fa-calendar-plus"></i> Đặt bàn mới
-      </button>
-    </header>
-
-    <div class="card-organic card-organic-xl">
-      <div class="filter-bar">
-        <div class="search-organic-wrap">
-          <i class="fa-solid fa-magnifying-glass search-icon"></i>
-          <input
-            type="text"
-            class="input-organic"
-            placeholder="Tìm tên khách hoặc SĐT"
-            v-model="searchQuery"
-          />
-        </div>
-        <select class="select-organic" v-model="statusFilter">
-          <option value="all">Tất cả trạng thái</option>
-          <option value="pending">Chờ xác nhận</option>
-          <option value="confirmed">Đã xác nhận</option>
-          <option value="completed">Đã nhận bàn</option>
-          <option value="cancelled">Đã hủy</option>
-        </select>
-      </div>
-
-      <div class="summary-bar">
-        <div class="summary-card">
-          <span>Tổng lượt đặt</span>
-          <strong>{{ bookingCounts.total }}</strong>
-        </div>
-        <div class="summary-card">
-          <span>Đang chờ</span>
-          <strong>{{ bookingCounts.pending }}</strong>
-        </div>
-        <div class="summary-card">
-          <span>Đã xác nhận</span>
-          <strong>{{ bookingCounts.confirmed }}</strong>
-        </div>
-        <div class="summary-card">
-          <span>Đã hủy</span>
-          <strong>{{ bookingCounts.cancelled }}</strong>
-        </div>
-      </div>
-
-      <div v-if="isLoading" class="loading-block">
-        <div class="spinner-border" role="status"></div>
-      </div>
-
-      <div v-else>
-        <table class="table-organic" v-if="filteredBookings.length > 0">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Khách hàng</th>
-              <th>SĐT</th>
-              <th>Thời gian</th>
-              <th>Bàn</th>
-              <th>Ghi chú</th>
-              <th>Trạng thái</th>
-              <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(booking, index) in filteredBookings" :key="booking.id">
-              <td>{{ index + 1 }}</td>
-              <td>{{ booking.ten_khach_hang }}</td>
-              <td>{{ booking.so_dien_thoai }}</td>
-              <td>{{ formatDateTime(booking.thoi_gian_dat) }}</td>
-              <td>
-                <span v-if="booking.ban" class="badge-organic badge-info-organic">
-                  {{ booking.ban.ban_name }}
-                </span>
-                <span v-else>Chưa gán bàn</span>
-              </td>
-              <td>
-                <span class="note-text">{{ booking.ghi_chu || 'Không có' }}</span>
-              </td>
-              <td>
-                <span :class="statusClass(booking.status)" class="badge-organic">
-                  {{ statusText(booking.status) }}
-                </span>
-              </td>
-              <td>
-                <button
-                  class="btn-organic btn-ghost-organic"
-                  @click="updateStatus(booking.id, 'confirmed')"
-                  :disabled="booking.status === 'confirmed'"
-                >
-                  Xác nhận
-                </button>
-                <button
-                  class="btn-organic btn-success-organic"
-                  v-if="booking.status !== 'completed'"
-                  @click="completeBooking(booking.id)"
-                >
-                  Hoàn tất
-                </button>
-                <button
-                  class="btn-organic btn-danger-organic"
-                  @click="deleteBooking(booking.id)"
-                >
-                  Xóa
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div v-else class="empty-state">
-          <p>Hiện chưa có lịch đặt bàn phù hợp.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="modalDatBan" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modal-content-organic">
-          <div class="modal-header">
-            <h5 class="modal-title">Đặt bàn mới</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="form-grid">
-              <label>
-                Tên khách hàng
-                <input type="text" class="input-organic" v-model="form.ten_khach_hang" />
-              </label>
-              <label>
-                Số điện thoại
-                <input type="text" class="input-organic" v-model="form.so_dien_thoai" />
-              </label>
-              <label>
-                Thời gian đặt
-                <input type="datetime-local" class="input-organic" v-model="form.thoi_gian_dat" />
-              </label>
-              <label>
-                Loại bàn
-                <select class="select-organic" v-model="form.loai_ban">
-                  <option :value="1">Bida Lỗ</option>
-                  <option :value="2">Bida Phăng</option>
-                  <option :value="3">Bida Lỗ VIP</option>
-                  <option :value="4">Bida Phăng VIP</option>
-                </select>
-              </label>
-              <label>
-                Bàn cụ thể
-                <select class="select-organic" v-model="form.ban_id">
-                  <option :value="null">Chọn bàn</option>
-                  <option v-for="ban in tableList" :key="ban.ban_id" :value="ban.ban_id">
-                    {{ ban.ban_name }} - {{ ban.loai_ban_label }} ({{ ban.status_label || ban.status }})
-                  </option>
-                </select>
-              </label>
-              <label class="col-12">
-                Ghi chú
-                <textarea class="input-organic" rows="3" v-model="form.ghi_chu"></textarea>
-              </label>
+    <div class="reservation-page">
+        <!-- Header -->
+        <header class="page-header">
+            <div>
+                <h2 class="page-title">Quản lý <strong>Đặt Bàn Trước</strong></h2>
+                <p class="page-subtitle">Quản lý lịch hẹn, thông tin khách hàng và trạng thái đặt chỗ.</p>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn-organic btn-ghost-organic" data-bs-dismiss="modal">Huỷ</button>
-            <button type="button" class="btn-organic btn-primary-organic" @click="saveBooking" :disabled="isSaving">
-              {{ isSaving ? 'Đang lưu...' : 'Lưu đặt bàn' }}
+            <button class="btn-organic btn-primary-organic" @click="openModal" style="padding: 12px 28px;">
+                <i class="fa-solid fa-calendar-plus"></i> ĐẶT BÀN MỚI
             </button>
-          </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="card-organic card-organic-xl">
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="search-organic-wrap">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" class="input-organic" style="padding-left: 52px;" v-model="searchQuery" placeholder="Tìm theo tên khách hoặc SĐT...">
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <select class="select-organic" v-model="statusFilter">
+                        <option value="all">Tất cả trạng thái</option>
+                        <option value="pending">Chờ xác nhận</option>
+                        <option value="confirmed">Đã xác nhận</option>
+                        <option value="cancelled">Đã hủy</option>
+                        <option value="completed">Đã nhận bàn</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div v-if="isLoading" style="text-align: center; padding: 80px 40px;">
+                <div class="spinner-border" style="color: var(--natural-primary);"></div>
+            </div>
+
+            <!-- Empty State -->
+            <div v-else-if="filteredList.length === 0" style="text-align: center; padding: 80px 40px;">
+                <i class="fa-solid fa-calendar-xmark" style="font-size: 3.5rem; color: var(--natural-muted); opacity: 0.15; margin-bottom: 20px; display: block;"></i>
+                <h3 class="serif" style="font-style: italic; color: var(--natural-muted); font-weight: 300;">Chưa có lịch đặt bàn nào</h3>
+            </div>
+
+            <!-- Table -->
+            <div v-else style="overflow-x: auto;">
+                <table class="table-organic">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Khách hàng</th>
+                            <th>SĐT</th>
+                            <th>Thời gian</th>
+                            <th>Loại bàn</th>
+                            <th>Bàn cụ thể</th>
+                            <th style="text-align: center;">Trạng thái</th>
+                            <th style="text-align: right;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in filteredList" :key="item.id">
+                            <td>{{ index + 1 }}</td>
+                            <td><span style="font-weight: 700; color: var(--natural-text);">{{ item.ten_khach_hang }}</span></td>
+                            <td><span class="font-mono">{{ item.so_dien_thoai }}</span></td>
+                            <td>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-weight: 600; font-size: 14px;">{{ formatTime(item.thoi_gian_dat) }}</span>
+                                    <span class="label-xs" style="color: var(--natural-muted);">{{ formatDate(item.thoi_gian_dat) }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span v-if="item.loai_ban === 1" class="badge-organic">Bida Lỗ</span>
+                                <span v-else-if="item.loai_ban === 2" class="badge-organic badge-info-organic">Bida Phăng</span>
+                                <span v-else-if="item.loai_ban === 3" class="badge-organic badge-warning-organic">Lỗ VIP</span>
+                                <span v-else-if="item.loai_ban === 4" class="badge-organic badge-danger-organic">Phăng VIP</span>
+                                <span v-else class="badge-organic">Khác</span>
+                            </td>
+                            <td>
+                                <span v-if="item.ban" class="badge-organic" style="background-color: var(--natural-accent-light); color: var(--natural-primary); border: 1px solid var(--natural-primary);">
+                                    {{ item.ban.name }}
+                                </span>
+                                <span v-else style="color: var(--natural-muted); font-style: italic; font-size: 12px;">Chưa chọn bàn</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="dropdown">
+                                    <button class="badge-organic" :class="getStatusBadgeClass(item.status)" data-bs-toggle="dropdown" style="border: none; cursor: pointer;">
+                                        <span class="dot dot-sm" :class="getStatusDotClass(item.status)"></span>
+                                        {{ getStatusText(item.status) }}
+                                        <i class="fa-solid fa-chevron-down" style="font-size: 8px; margin-left: 6px;"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-organic">
+                                        <li><a class="dropdown-item" @click="updateStatus(item.id, 'confirmed')">Xác nhận</a></li>
+                                        <li><a class="dropdown-item" @click="updateStatus(item.id, 'cancelled')">Hủy lịch</a></li>
+                                        <li><a class="dropdown-item" @click="updateStatus(item.id, 'completed')">Đã nhận bàn</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                            <td style="text-align: right;">
+                                <button class="btn-organic btn-ghost-organic" @click="deleteItem(item.id)" style="padding: 8px 12px; color: #ef4444;">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-      </div>
+
+        <!-- Create Modal -->
+        <div class="modal fade" id="modalDatBan" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-content-organic">
+                    <div class="modal-header border-0" style="padding: 32px 32px 16px;">
+                        <h4 class="modal-title serif" style="font-style: italic;">Đặt bàn mới</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" style="padding: 16px 32px 32px;">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <label class="label-xs mb-2">TÊN KHÁCH HÀNG</label>
+                                <input type="text" class="input-organic" v-model="newItem.ten_khach_hang" placeholder="Nhập tên khách...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="label-xs mb-2">SỐ ĐIỆN THOẠI</label>
+                                <input type="text" class="input-organic" v-model="newItem.so_dien_thoai" placeholder="09xxx...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="label-xs mb-2">SỐ NGƯỜI</label>
+                                <input type="number" class="input-organic" v-model="newItem.so_luong_nguoi">
+                            </div>
+                            <div class="col-12">
+                                <label class="label-xs mb-2">THỜI GIAN ĐẶT</label>
+                                <input type="datetime-local" class="input-organic" v-model="newItem.thoi_gian_dat">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="label-xs mb-2">LOẠI BÀN</label>
+                                <select class="select-organic" v-model="newItem.loai_ban">
+                                    <option :value="1">Bida Lỗ</option>
+                                    <option :value="2">Bida Phăng</option>
+                                    <option :value="3">Bida Lỗ VIP</option>
+                                    <option :value="4">Bida Phăng VIP</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="label-xs mb-2">CHỌN BÀN (TÙY CHỌN)</label>
+                                <select class="select-organic" v-model="newItem.ban_id">
+                                    <option :value="null">Chưa gán bàn</option>
+                                    <option v-for="ban in availableTables" :key="ban.ban_id" :value="ban.ban_id">
+                                        {{ ban.ban_name }} ({{ getTableStatusText(ban.status) }})
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="label-xs mb-2">GHI CHÚ</label>
+                                <textarea class="input-organic" v-model="newItem.ghi_chu" rows="2" placeholder="Yêu cầu đặc biệt..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0" style="padding: 16px 32px 32px;">
+                        <button type="button" class="btn-organic btn-ghost-organic" data-bs-dismiss="modal">HỦY</button>
+                        <button type="button" class="btn-organic btn-primary-organic" @click="createItem" :disabled="isSaving">
+                            <span v-if="isSaving" class="spinner-border spinner-border-sm me-2"></span>
+                            XÁC NHẬN ĐẶT
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -181,238 +173,150 @@ import axios from 'axios';
 import { Modal } from 'bootstrap';
 
 export default {
-  data() {
-    return {
-      isLoading: false,
-      isSaving: false,
-      bookings: [],
-      tableList: [],
-      searchQuery: '',
-      statusFilter: 'all',
-      modal: null,
-      form: {
-        ten_khach_hang: '',
-        so_dien_thoai: '',
-        thoi_gian_dat: '',
-        loai_ban: 1,
-        ban_id: null,
-        so_luong_nguoi: 1,
-        ghi_chu: ''
-      },
-      formErrors: {}
-    };
-  },
-  computed: {
-    filteredBookings() {
-      let list = this.bookings;
-      if (this.searchQuery) {
-        const q = this.searchQuery.toLowerCase();
-        list = list.filter(item =>
-          item.ten_khach_hang.toLowerCase().includes(q) ||
-          item.so_dien_thoai.includes(q)
-        );
-      }
-      if (this.statusFilter !== 'all') {
-        list = list.filter(item => item.status === this.statusFilter);
-      }
-      return list;
+    data() {
+        return {
+            isLoading: false,
+            isSaving: false,
+            list: [],
+            tableList: [],
+            searchQuery: '',
+            statusFilter: 'all',
+            modal: null,
+            newItem: {
+                ten_khach_hang: '',
+                so_dien_thoai: '',
+                thoi_gian_dat: '',
+                loai_ban: 1,
+                ban_id: null,
+                so_luong_nguoi: 1,
+                ghi_chu: ''
+            }
+        }
     },
-    bookingCounts() {
-      return {
-        total: this.bookings.length,
-        pending: this.bookings.filter(b => b.status === 'pending').length,
-        confirmed: this.bookings.filter(b => b.status === 'confirmed').length,
-        cancelled: this.bookings.filter(b => b.status === 'cancelled').length,
-      };
+    computed: {
+        filteredList() {
+            let res = this.list;
+            if (this.searchQuery) {
+                const q = this.searchQuery.toLowerCase();
+                res = res.filter(i => i.ten_khach_hang.toLowerCase().includes(q) || i.so_dien_thoai.includes(q));
+            }
+            if (this.statusFilter !== 'all') {
+                res = res.filter(i => i.status === this.statusFilter);
+            }
+            return res;
+        },
+        availableTables() {
+            // Lọc bàn theo loại bàn đã chọn
+            return this.tableList.filter(ban => Number(ban.loai_ban) === Number(this.newItem.loai_ban));
+        }
+    },
+    mounted() {
+        this.getData();
+        this.getTables();
+        this.modal = new Modal(document.getElementById('modalDatBan'));
+    },
+    methods: {
+        getData() {
+            this.isLoading = true;
+            axios.get('http://127.0.0.1:8000/api/admin/dat-ban/get-data')
+                .then(res => { this.list = res.data.data; })
+                .finally(() => { this.isLoading = false; });
+        },
+        getTables() {
+            axios.get('http://127.0.0.1:8000/api/admin/ban/get-data')
+                .then(res => { this.tableList = res.data.data; });
+        },
+        openModal() {
+            this.newItem = {
+                ten_khach_hang: '',
+                so_dien_thoai: '',
+                thoi_gian_dat: new Date().toISOString().slice(0, 16),
+                loai_ban: 1,
+                ban_id: null,
+                so_luong_nguoi: 1,
+                ghi_chu: ''
+            };
+            this.modal.show();
+        },
+        createItem() {
+            if (!this.newItem.ten_khach_hang || !this.newItem.so_dien_thoai || !this.newItem.thoi_gian_dat) {
+                alert('Vui lòng nhập đầy đủ thông tin bắt buộc');
+                return;
+            }
+            this.isSaving = true;
+            axios.post('http://127.0.0.1:8000/api/admin/dat-ban/create-data', this.newItem)
+                .then(() => {
+                    this.getData();
+                    this.getTables();
+                    this.modal.hide();
+                })
+                .finally(() => { this.isSaving = false; });
+        },
+        updateStatus(id, status) {
+            axios.post('http://127.0.0.1:8000/api/admin/dat-ban/update-status', { id, status })
+                .then(() => { 
+                    this.getData(); 
+                    this.getTables();
+                });
+        },
+        deleteItem(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa lịch đặt bàn này?')) {
+                axios.post('http://127.0.0.1:8000/api/admin/dat-ban/delete-data', { id })
+                    .then(() => { this.getData(); });
+            }
+        },
+        formatDate(dt) {
+            return new Date(dt).toLocaleDateString('vi-VN');
+        },
+        formatTime(dt) {
+            return new Date(dt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+        },
+        getStatusText(s) {
+            const map = { 
+                pending: 'Chờ xác nhận', 
+                confirmed: 'Đã xác nhận', 
+                cancelled: 'Đã hủy', 
+                completed: 'Đã nhận bàn' 
+            };
+            return map[s] || s;
+        },
+        getTableStatusText(s) {
+            const map = {
+                1: 'TRỐNG',
+                2: 'ĐANG SỬ DỤNG',
+                3: 'ĐÃ ĐẶT'
+            };
+            return map[s] || 'KHÁC';
+        },
+        getStatusBadgeClass(s) {
+            const map = { pending: 'badge-warning-organic', confirmed: 'badge-info-organic', cancelled: 'badge-danger-organic', completed: 'badge-success-organic' };
+            return map[s] || '';
+        },
+        getStatusDotClass(s) {
+            const map = { pending: 'dot-warning dot-pulse', confirmed: 'dot-info', cancelled: 'dot-danger', completed: 'dot-success' };
+            return map[s] || '';
+        }
     }
-  },
-  mounted() {
-    this.loadBookings();
-    this.loadTables();
-    this.modal = new Modal(document.getElementById('modalDatBan'));
-  },
-  methods: {
-    resetForm() {
-      this.form = {
-        ten_khach_hang: '',
-        so_dien_thoai: '',
-        thoi_gian_dat: new Date().toISOString().slice(0, 16),
-        loai_ban: 1,
-        ban_id: null,
-        so_luong_nguoi: 1,
-        ghi_chu: ''
-      };
-      this.formErrors = {};
-    },
-    loadBookings() {
-      this.isLoading = true;
-      axios.get('http://127.0.0.1:8000/api/admin/dat-ban/get-data')
-        .then(res => {
-          this.bookings = res.data.data || [];
-        })
-        .finally(() => {
-          this.isLoading = false;
-        });
-    },
-    loadTables() {
-      axios.get('http://127.0.0.1:8000/api/admin/ban/get-data')
-        .then(res => {
-          this.tableList = res.data.data || [];
-        });
-    },
-    openModal() {
-      this.resetForm();
-      this.modal.show();
-    },
-    saveBooking() {
-      if (!this.form.ten_khach_hang || !this.form.so_dien_thoai || !this.form.thoi_gian_dat) {
-        this.formErrors = {
-          ten_khach_hang: !this.form.ten_khach_hang ? 'Tên khách hàng bắt buộc' : '',
-          so_dien_thoai: !this.form.so_dien_thoai ? 'Số điện thoại bắt buộc' : '',
-          thoi_gian_dat: !this.form.thoi_gian_dat ? 'Thời gian đặt bắt buộc' : ''
-        };
-        return;
-      }
-      this.isSaving = true;
-      axios.post('http://127.0.0.1:8000/api/admin/dat-ban/create-data', this.form)
-        .then(() => {
-          this.loadBookings();
-          this.loadTables();
-          this.resetForm();
-          this.modal.hide();
-        })
-        .catch(error => {
-          this.handleApiError(error);
-        })
-        .finally(() => {
-          this.isSaving = false;
-        });
-    },
-    updateStatus(id, status) {
-      axios.post('http://127.0.0.1:8000/api/admin/dat-ban/update-status', { id, status })
-        .then(() => {
-          this.loadBookings();
-          this.loadTables();
-        });
-    },
-    completeBooking(id) {
-      axios.post('http://127.0.0.1:8000/api/admin/dat-ban/update-status', { id, status: 'completed' })
-        .then(() => {
-          this.loadBookings();
-          this.loadTables();
-        })
-        .catch(error => {
-          this.handleApiError(error);
-        });
-    },
-    deleteBooking(id) {
-      if (!confirm('Xác nhận xóa lịch đặt bàn này?')) return;
-      axios.post('http://127.0.0.1:8000/api/admin/dat-ban/delete-data', { id })
-        .then(() => {
-          this.loadBookings();
-          this.loadTables();
-        })
-        .catch(error => {
-          this.handleApiError(error);
-        });
-    },
-    formatDateTime(value) {
-      return new Date(value).toLocaleString('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    },
-    statusText(status) {
-      const map = {
-        pending: 'Chờ xác nhận',
-        confirmed: 'Đã xác nhận',
-        completed: 'Đã nhận bàn',
-        cancelled: 'Đã hủy'
-      };
-      return map[status] || status;
-    },
-    statusClass(status) {
-      const map = {
-        pending: 'badge-warning-organic',
-        confirmed: 'badge-info-organic',
-        completed: 'badge-success-organic',
-        cancelled: 'badge-danger-organic'
-      };
-      return map[status] || 'badge-organic';
-    },
-    handleApiError(error) {
-      const message = error?.response?.data?.message || 'Lỗi kết nối server, vui lòng thử lại';
-      alert(message);
-    }
-  }
-};
+}
 </script>
 
 <style scoped>
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  align-items: center;
-  margin-bottom: 24px;
+.dropdown-menu-organic {
+    border: 1px solid var(--natural-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
 }
-.filter-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 18px;
-  padding: 20px 24px;
+.dropdown-item {
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
 }
-.loading-block {
-  text-align: center;
-  padding: 60px 0;
+.dropdown-item:hover {
+    background-color: var(--natural-bg);
+    color: var(--natural-primary);
 }
-.empty-state {
-  padding: 40px;
-  text-align: center;
-  color: var(--natural-muted);
-}
-.form-grid {
-  display: grid;
-  gap: 16px;
-}
-.form-grid label {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-weight: 500;
-}
-.summary-bar {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  padding: 16px 24px;
-}
-.summary-card {
-  padding: 18px 20px;
-  background: var(--natural-surface);
-  border: 1px solid var(--natural-border);
-  border-radius: var(--radius-lg);
-}
-.summary-card span {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--natural-muted);
-}
-.summary-card strong {
-  font-size: 1.45rem;
-  font-weight: 700;
-}
-@media (max-width: 900px) {
-  .summary-bar {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 600px) {
-  .summary-bar {
-    grid-template-columns: 1fr;
-  }
-}
+</style>
