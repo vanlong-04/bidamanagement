@@ -33,4 +33,16 @@ class Ban extends Model
         'loai_ban',
         'status',
     ];
+
+    public function bookings()
+    {
+        return $this->hasMany(DatBan::class, 'ban_id');
+    }
+
+    public function activeBooking()
+    {
+        return $this->hasOne(DatBan::class, 'ban_id')
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->orderBy('thoi_gian_dat', 'asc');
+    }
 }
