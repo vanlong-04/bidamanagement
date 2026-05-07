@@ -45,4 +45,18 @@ class Ban extends Model
             ->whereIn('status', ['pending', 'confirmed'])
             ->orderBy('thoi_gian_dat', 'asc');
     }
+
+    public function getNameAttribute(): string
+    {
+        return $this->ban_name;
+    }
+
+    public function getLoaiBanLabelAttribute(): string
+    {
+        if ($this->loai_ban == self::LOAI_LO) return 'Bida Lỗ';
+        if ($this->loai_ban == self::LOAI_PHANG) return 'Bida Phăng';
+        if ($this->loai_ban == self::LOAI_LO_VIP) return 'Bida Lỗ VIP';
+        if ($this->loai_ban == self::LOAI_PHANG_VIP) return 'Bida Phăng VIP';
+        return 'Khác';
+    }
 }
