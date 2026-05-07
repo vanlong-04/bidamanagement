@@ -26,6 +26,20 @@ class DatBanController extends Controller
         Ban::where('ban_id', $banId)->update(['status' => $banStatus]);
     }
 
+    private function makeBookingPayload(Request $request): array
+    {
+        return [
+            'ban_id' => $request->ban_id,
+            'loai_ban' => $request->loai_ban ?? Ban::LOAI_LO,
+            'ten_khach_hang' => $request->ten_khach_hang,
+            'so_dien_thoai' => $request->so_dien_thoai,
+            'thoi_gian_dat' => $request->thoi_gian_dat,
+            'so_luong_nguoi' => $request->so_luong_nguoi ?? 1,
+            'ghi_chu' => $request->ghi_chu,
+            'status' => self::STATUS_PENDING,
+        ];
+    }
+
     public function index()
     {
         $data = DatBan::with('ban')
@@ -46,16 +60,7 @@ class DatBanController extends Controller
             'thoi_gian_dat' => 'required|date',
         ]);
 
-        $booking = DatBan::create([
-            'ban_id' => $request->ban_id,
-            'loai_ban' => $request->loai_ban ?? Ban::LOAI_LO,
-            'ten_khach_hang' => $request->ten_khach_hang,
-            'so_dien_thoai' => $request->so_dien_thoai,
-            'thoi_gian_dat' => $request->thoi_gian_dat,
-            'so_luong_nguoi' => $request->so_luong_nguoi ?? 1,
-            'ghi_chu' => $request->ghi_chu,
-            'status' => 'pending',
-        ]);
+        $booking = DatBan::create($this->makeBookingPayload($request));
 
         if ($booking->ban_id) {
             $this->syncBanStatus($booking->ban_id, self::STATUS_PENDING);
