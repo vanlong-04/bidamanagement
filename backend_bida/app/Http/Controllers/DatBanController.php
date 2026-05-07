@@ -13,6 +13,19 @@ class DatBanController extends Controller
     public const STATUS_CANCELLED = 'cancelled';
     public const STATUS_COMPLETED = 'completed';
 
+    private function syncBanStatus(int $banId, string $bookingStatus): void
+    {
+        $banStatus = Ban::STATUS_TRONG;
+
+        if (in_array($bookingStatus, [self::STATUS_PENDING, self::STATUS_CONFIRMED], true)) {
+            $banStatus = Ban::STATUS_DA_DAT;
+        } elseif ($bookingStatus === self::STATUS_COMPLETED) {
+            $banStatus = Ban::STATUS_DANG_SU_DUNG;
+        }
+
+        Ban::where('ban_id', $banId)->update(['status' => $banStatus]);
+    }
+
     public function index()
     {
         $data = DatBan::with('ban')
@@ -45,8 +58,7 @@ class DatBanController extends Controller
         ]);
 
         if ($booking->ban_id) {
-            Ban::where('ban_id', $booking->ban_id)
-                ->update(['status' => Ban::STATUS_DA_DAT]);
+            $this->syncBanStatus($booking->ban_id, self::STATUS_PENDING);
         }
 
         return response()->json([
@@ -67,15 +79,7 @@ class DatBanController extends Controller
         $booking->update(['status' => $request->status]);
 
         if ($booking->ban_id) {
-            $newBanStatus = Ban::STATUS_TRONG;
-            if ($request->status === 'confirmed' || $request->status === 'pending') {
-                $newBanStatus = Ban::STATUS_DA_DAT;
-            } elseif ($request->status === 'completed') {
-                $newBanStatus = Ban::STATUS_DANG_SU_DUNG;
-            }
-
-            Ban::where('ban_id', $booking->ban_id)
-                ->update(['status' => $newBanStatus]);
+            $this->syncBanStatus($booking->ban_id, $request->status);
         }
 
         return response()->json([
@@ -95,8 +99,7 @@ class DatBanController extends Controller
         $booking->delete();
 
         if ($banId) {
-            Ban::where('ban_id', $banId)
-                ->update(['status' => Ban::STATUS_TRONG]);
+            $this->syncBanStatus($banId, self::STATUS_CANCELLED);
         }
 
         return response()->json([
