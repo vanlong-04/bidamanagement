@@ -3,6 +3,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HoaDonController;
 use App\Http\Controllers\KhachHangController;
+use App\Http\Controllers\DatBanController;
+use App\Http\Controllers\DashboardController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -33,3 +35,10 @@ Route::post("/admin/ban/create-data", [BanController::class, "createBan"]);
 Route::get("/admin/ban/get-data", [BanController::class, "getBan"]);
 Route::post("/admin/ban/update-data", [BanController::class, "updateBan"]);
 Route::post("/admin/ban/delete-data", [BanController::class, "deleteBan"]);
+
+// Hoang's booking and dashboard routes
+Route::get('/admin/dashboard/stats', [DashboardController::class, 'getStats']);
+Route::get('/admin/dat-ban/get-data', [DatBanController::class, 'index']);
+Route::post('/admin/dat-ban/create-data', [DatBanController::class, 'store']);
+Route::post('/admin/dat-ban/update-status', [DatBanController::class, 'updateStatus']);
+Route::post('/admin/dat-ban/delete-data', [DatBanController::class, 'destroy']);
