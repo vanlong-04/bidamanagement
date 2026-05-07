@@ -97,7 +97,7 @@ class DatBanController extends Controller
             $this->syncBanStatus($booking->ban_id, self::STATUS_PENDING);
         }
 
-        return $this->successResponse('Đặt bàn thành công', $booking);
+        return $this->successResponse('Đặt bàn thành công', $this->transformBooking($booking));
     }
 
     public function updateStatus(Request $request)
